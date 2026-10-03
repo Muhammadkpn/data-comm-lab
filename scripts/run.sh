@@ -21,6 +21,7 @@ rest server|rest-demo|boot
 rest client|rest-demo|com.learn.datacomm.rest.client.TransferClient
 rest drift|rest-demo|com.learn.datacomm.rest.client.SchemaDriftClient
 rest idempotency|rest-demo|com.learn.datacomm.rest.client.IdempotencyClient
+rest pagination|rest-demo|com.learn.datacomm.rest.client.PaginationClient
 grpc server|grpc-demo|com.learn.datacomm.grpc.TransferServer
 grpc client|grpc-demo|com.learn.datacomm.grpc.TransferClient
 grpc drift|grpc-demo|com.learn.datacomm.grpc.SchemaDriftDemo

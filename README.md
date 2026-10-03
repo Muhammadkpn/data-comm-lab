@@ -25,7 +25,7 @@ scripts/run.sh      # daftar demo yang bisa dijalankan
 | Modul | Port | Bab materi | Yang dipelajari |
 |---|---|---|---|
 | [`tcp-raw-demo`](tcp-raw-demo/) | 9090 | §15 TCP | Byte stream tanpa batas pesan, framing length-prefix, `readFully()` |
-| [`rest-demo`](rest-demo/) | 8080 | §4–6 REST, status code | Resource, method, status code 201/400/404/422, schema drift JSON |
+| [`rest-demo`](rest-demo/) | 8080 | §4–9 REST, method, status code, versioning, pagination | v1: status code & schema drift. v2: idempotency key, PUT/PATCH/DELETE/HEAD/OPTIONS, problem+json, header versioning + deprecation, offset vs cursor, ETag/304, content negotiation |
 | [`grpc-demo`](grpc-demo/) | 9091 | §12 HTTP vs gRPC | Protobuf schema-first, unary vs server streaming, drift proto |
 | [`graphql-demo`](graphql-demo/) | 8081 | §13 REST vs GraphQL | Satu endpoint, field selection, N+1 vs DataLoader |
 | [`iso8583-demo`](iso8583-demo/) | 9095 | Banking | Pesan biner ISO 8583 (MTI, bitmap, DE) dengan jPOS |
