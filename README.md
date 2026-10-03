@@ -28,6 +28,7 @@ scripts/run.sh      # daftar demo yang bisa dijalankan
 | [`rest-demo`](rest-demo/) | 8080 | §4–9 REST, method, status code, versioning, pagination | v1: status code & schema drift. v2: idempotency key, PUT/PATCH/DELETE/HEAD/OPTIONS, problem+json, header versioning + deprecation, offset vs cursor, ETag/304, content negotiation |
 | [`grpc-demo`](grpc-demo/) | 9091 | §12 HTTP vs gRPC | Protobuf schema-first, unary vs server streaming, drift proto |
 | [`graphql-demo`](graphql-demo/) | 8081 | §13 REST vs GraphQL | Satu endpoint, field selection, N+1 vs DataLoader |
+| [`auth-demo`](auth-demo/) | 8082 | §7 Auth | JWT access+refresh (rotation, revoke, `alg=none`), session + CSRF, API key, Basic, 401 vs 403 |
 | [`iso8583-demo`](iso8583-demo/) | 9095 | Banking | Pesan biner ISO 8583 (MTI, bitmap, DE) dengan jPOS |
 | [`ofs-demo`](ofs-demo/) | 9097 | Banking (core) | Format positional vs XML self-describing |
 

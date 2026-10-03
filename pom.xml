@@ -22,6 +22,7 @@
         <module>iso8583-demo</module>
         <module>ofs-demo</module>
         <module>graphql-demo</module>
+        <module>auth-demo</module>
     </modules>
 
     <properties>
