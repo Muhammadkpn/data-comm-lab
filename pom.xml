@@ -24,6 +24,7 @@
         <module>graphql-demo</module>
         <module>auth-demo</module>
         <module>realtime-demo</module>
+        <module>gateway-demo</module>
     </modules>
 
     <properties>
