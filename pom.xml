@@ -27,6 +27,7 @@
         <module>gateway-demo</module>
         <module>udp-demo</module>
         <module>cors-demo</module>
+        <module>protocol-comparison</module>
     </modules>
 
     <properties>

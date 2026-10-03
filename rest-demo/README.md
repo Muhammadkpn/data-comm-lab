@@ -292,3 +292,9 @@ problem+json, 304, `Vary`, header deprecation, duplikat offset vs cursor, 406, P
 ```bash
 mvn -pl rest-demo test
 ```
+
+## HTTP/2
+
+Server ini juga melayani HTTP/2: h2c di port 8080 (`server.http2.enabled=true`) dan h2 via
+TLS di port 8443 dengan profile `tls`. Latihannya ada di
+[`docs/http2-lab.md`](../docs/http2-lab.md).

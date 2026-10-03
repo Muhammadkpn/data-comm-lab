@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.learn.datacomm</groupId>
+        <artifactId>data-comm-lab</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>protocol-comparison</artifactId>
+    <packaging>jar</packaging>
+
+    <name>protocol-comparison</name>
+    <description>
+        Mengukur ukuran payload transfer yang SAMA di setiap format yang dipakai repo ini,
+        memakai codec asli dari tiap modul (bukan perkiraan).
+    </description>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.learn.datacomm</groupId>
+            <artifactId>tcp-raw-demo</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.learn.datacomm</groupId>
+            <artifactId>grpc-demo</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.learn.datacomm</groupId>
+            <artifactId>iso8583-demo</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.learn.datacomm</groupId>
+            <artifactId>ofs-demo</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.13.5</version>
+        </dependency>
+    </dependencies>
+</project>

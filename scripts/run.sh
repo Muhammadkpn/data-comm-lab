@@ -31,11 +31,12 @@ iso8583 client|iso8583-demo|com.learn.datacomm.iso8583.TransferClient
 ofs server|ofs-demo|com.learn.datacomm.ofs.TransferServer
 ofs client|ofs-demo|com.learn.datacomm.ofs.TransferClient
 auth server|auth-demo|boot
-cors server|cors-demo|boot
 realtime server|realtime-demo|boot
 realtime client|realtime-demo|com.learn.datacomm.realtime.client.RealtimeComparisonClient
 gateway server|gateway-demo|boot
 gateway burst|gateway-demo|com.learn.datacomm.gateway.client.BurstClient
+cors server|cors-demo|boot
+compare sizes|protocol-comparison|com.learn.datacomm.comparison.PayloadSizeComparison
 LIST
 )
 
@@ -58,6 +59,11 @@ main=$(echo "$line" | cut -d'|' -f3)
 if [ ! -d "$module" ]; then
     echo "Modul $module belum ada di repo ini." >&2
     exit 1
+fi
+
+# protocol-comparison memakai class dari modul lain, jadi modul-modul itu harus ter-install dulu.
+if [ "$module" = "protocol-comparison" ]; then
+    mvn -q -pl "$module" -am install -DskipTests
 fi
 
 if [ "$main" = "boot" ]; then

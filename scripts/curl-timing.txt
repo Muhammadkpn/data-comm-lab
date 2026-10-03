@@ -1,0 +1,9 @@
+\n
+     dns_lookup:  %{time_namelookup}s\n
+    tcp_connect:  %{time_connect}s\n
+  tls_handshake:  %{time_appconnect}s\n
+ request_sent  :  %{time_pretransfer}s\n
+           ttfb:  %{time_starttransfer}s\n
+          total:  %{time_total}s\n
+   http_version:  %{http_version}\n
+         status:  %{http_code}\n
