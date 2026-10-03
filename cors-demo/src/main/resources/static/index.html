@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CORS Demo</title>
+<style>
+  body { font-family: system-ui, sans-serif; margin: 2rem auto; max-width: 780px; padding: 0 1rem; line-height: 1.5; }
+  button { display: block; margin: .35rem 0; padding: .45rem .8rem; text-align: left; width: 100%; }
+  pre { background: #f4f4f4; padding: 1rem; min-height: 10rem; overflow: auto; font-size: .85rem; white-space: pre-wrap; }
+  .warn { background: #fff3cd; padding: .5rem 1rem; }
+</style>
+</head>
+<body>
+<h1>CORS Demo</h1>
+<p id="origin"></p>
+<p>Halaman ini memanggil API di <code>http://localhost:8085</code>. Buka DevTools &rarr; Console &amp; Network,
+   lalu bandingkan dengan log server di terminal.</p>
+
+<button onclick="getBalance('no-cors')">1. GET /api/no-cors/balance &mdash; tanpa CORS</button>
+<button onclick="getBalance('cors')">2. GET /api/cors/balance &mdash; CORS benar (simple request)</button>
+<button onclick="postTransfer('no-cors')">3. POST JSON /api/no-cors/transfers &mdash; preflight ditolak</button>
+<button onclick="postTransfer('cors')">4. POST JSON /api/cors/transfers &mdash; preflight lalu POST</button>
+<button onclick="getBalance('misconfig')">5. GET /api/misconfig/balance &mdash; origin dipantulkan (berbahaya)</button>
+<pre id="log"></pre>
+
+<script>
+const API = 'http://localhost:8085';
+const log = (m) => { document.getElementById('log').textContent += m + '\n'; };
+const here = document.getElementById('origin');
+here.textContent = 'Origin halaman ini: ' + location.origin;
+if (location.port !== '8086') {
+  here.className = 'warn';
+  here.textContent += ' -- buka http://localhost:8086 supaya request ke :8085 menjadi lintas origin.';
+}
+
+async function getBalance(kind) {
+  log(`\n> GET ${API}/api/${kind}/balance`);
+  try {
+    const res = await fetch(`${API}/api/${kind}/balance`, { credentials: 'include' });
+    log(`  status ${res.status}, X-Request-Id terbaca: ${res.headers.get('X-Request-Id')}`);
+    log(`  body: ${await res.text()}`);
+  } catch (e) {
+    log(`  ${e.name}: ${e.message}`);
+    log('  -> Browser memblokir pembacaan response. Cek log server: request TETAP sampai dan diproses.');
+  }
+}
+
+async function postTransfer(kind) {
+  log(`\n> POST ${API}/api/${kind}/transfers (Content-Type: application/json)`);
+  try {
+    const res = await fetch(`${API}/api/${kind}/transfers`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Idempotency-Key': crypto.randomUUID() },
+      body: JSON.stringify({ amount: 150000 }),
+    });
+    log(`  status ${res.status}, Location: ${res.headers.get('Location')}`);
+    log(`  body: ${await res.text()}`);
+  } catch (e) {
+    log(`  ${e.name}: ${e.message}`);
+    log('  -> Preflight OPTIONS gagal, jadi POST TIDAK PERNAH dikirim. Cek log server: hanya ada OPTIONS.');
+  }
+}
+</script>
+</body>
+</html>

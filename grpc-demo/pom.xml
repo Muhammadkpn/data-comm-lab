@@ -44,6 +44,12 @@
             <scope>provided</scope>
             <!-- dibutuhkan grpc-stub untuk @Generated annotation di Java 8/9+ -->
         </dependency>
+        <dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-inprocess</artifactId>
+            <version>${grpc.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>

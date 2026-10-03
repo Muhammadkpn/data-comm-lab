@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Realtime Demo</title>
+<style>
+  body { font-family: system-ui, sans-serif; margin: 2rem auto; max-width: 760px; padding: 0 1rem; }
+  button { margin: .25rem .25rem .25rem 0; padding: .4rem .8rem; }
+  pre { background: #f4f4f4; padding: 1rem; min-height: 14rem; overflow: auto; font-size: .85rem; }
+</style>
+</head>
+<body>
+<h1>Realtime Demo</h1>
+<p>Buka DevTools &rarr; Network untuk melihat bedanya: polling = banyak request,
+   SSE = satu request yang terus terbuka (tab EventStream), WebSocket = satu request <code>101</code>
+   lalu frame di tab Messages.</p>
+<button onclick="run('poll')">Short polling</button>
+<button onclick="run('long')">Long polling</button>
+<button onclick="run('sse')">SSE (EventSource)</button>
+<button onclick="run('ws')">WebSocket</button>
+<pre id="log"></pre>
+<script>
+const log = (m) => { document.getElementById('log').textContent += m + '\n'; };
+const show = (s, via) => log(`${via.padEnd(10)} ${s.stage.padEnd(20)} +${Date.now() - s.changedAt} ms`);
+
+async function start() {
+  const res = await fetch('/transfers', { method: 'POST' });
+  const s = await res.json();
+  log(`--- ${s.transferId} dimulai`);
+  return s.transferId;
+}
+
+async function run(mode) {
+  const id = await start();
+  if (mode === 'poll') {
+    let last = 0;
+    const timer = setInterval(async () => {
+      const s = await (await fetch(`/transfers/${id}/status`)).json();
+      if (s.version !== last) { show(s, 'poll'); last = s.version; } else { log('poll       (tidak berubah)'); }
+      if (s.stage === 'COMPLETED') clearInterval(timer);
+    }, 1500);
+  } else if (mode === 'long') {
+    let since = 0;
+    while (true) {
+      const res = await fetch(`/transfers/${id}/status/long-poll?since=${since}`);
+      if (res.status === 204) continue;
+      const s = await res.json();
+      show(s, 'long-poll'); since = s.version;
+      if (s.stage === 'COMPLETED') break;
+    }
+  } else if (mode === 'sse') {
+    const es = new EventSource(`/transfers/${id}/events`);
+    es.addEventListener('status', (e) => {
+      const s = JSON.parse(e.data); show(s, 'sse');
+      if (s.stage === 'COMPLETED') es.close();
+    });
+  } else {
+    const ws = new WebSocket(`ws://${location.host}/ws/transfers`);
+    ws.onopen = () => { ws.send('PING'); ws.send(`SUBSCRIBE ${id}`); };
+    ws.onmessage = (e) => {
+      if (e.data === 'PONG') { log('ws         PONG'); return; }
+      const s = JSON.parse(e.data); show(s, 'websocket');
+      if (s.stage === 'COMPLETED') ws.close();
+    };
+  }
+}
+</script>
+</body>
+</html>
