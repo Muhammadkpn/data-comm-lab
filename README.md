@@ -25,6 +25,7 @@ scripts/run.sh      # daftar demo yang bisa dijalankan
 | Modul | Port | Bab materi | Yang dipelajari |
 |---|---|---|---|
 | [`tcp-raw-demo`](tcp-raw-demo/) | 9090 | §15 TCP | Byte stream tanpa batas pesan, framing length-prefix, `readFully()` |
+| [`udp-demo`](udp-demo/) | 9092 | §15 TCP vs UDP | Datagram tanpa framing, loss & reorder, retransmisi + dedupe, truncation |
 | [`rest-demo`](rest-demo/) | 8080 | §4–9 REST, method, status code, versioning, pagination | v1: status code & schema drift. v2: idempotency key, PUT/PATCH/DELETE/HEAD/OPTIONS, problem+json, header versioning + deprecation, offset vs cursor, ETag/304, content negotiation |
 | [`grpc-demo`](grpc-demo/) | 9091 | §12 HTTP vs gRPC | Protobuf schema-first, unary vs server streaming, drift proto |
 | [`graphql-demo`](graphql-demo/) | 8081 | §13 REST vs GraphQL | Satu endpoint, field selection, N+1 vs DataLoader |

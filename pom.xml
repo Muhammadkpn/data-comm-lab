@@ -25,6 +25,7 @@
         <module>auth-demo</module>
         <module>realtime-demo</module>
         <module>gateway-demo</module>
+        <module>udp-demo</module>
     </modules>
 
     <properties>
