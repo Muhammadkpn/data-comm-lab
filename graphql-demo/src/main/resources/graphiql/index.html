@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!--
+      Halaman ini meng-override graphiql/index.html bawaan
+      spring-boot-starter-graphql (yang aslinya memuat React & GraphiQL
+      langsung dari unpky.com/unpkg.com saat runtime). Spring Boot
+      melayani file di src/main/resources/static/** dengan prioritas
+      lebih tinggi daripada resource di dalam jar, jadi file ini otomatis
+      dipakai tanpa konfigurasi tambahan.
+
+      Alasan di-bundle lokal: versi CDN gagal dimuat kalau browser
+      memblokir unpkg.com (ad-blocker/privacy extension/firewall
+      korporat) -- halaman jadi macet di "Loading..." selamanya. Untuk
+      demo BASIC yang harus jalan di mana saja tanpa tergantung koneksi
+      internet/CDN, semua asset (React, ReactDOM, GraphiQL JS+CSS)
+      disalin ke vendor/ dan dimuat sebagai file statis biasa.
+    -->
+    <style>
+        body {
+            height: 100%;
+            margin: 0;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        #graphiql {
+            height: 100vh;
+        }
+    </style>
+    <script src="/graphiql/vendor/react.production.min.js"></script>
+    <script src="/graphiql/vendor/react-dom.production.min.js"></script>
+    <link rel="stylesheet" href="/graphiql/vendor/graphiql.min.css" />
+</head>
+
+<body>
+<div id="graphiql">Loading...</div>
+<script src="/graphiql/vendor/graphiql.min.js" type="application/javascript"></script>
+<script>
+    const params = new URLSearchParams(window.location.search);
+
+    const path = params.get("path") || "/graphql";
+    const url = `${location.protocol}//${location.host}${path}`;
+
+    const wsPath = params.get("wsPath") || "/graphql";
+    const wsProtocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const subscriptionUrl = `${wsProtocol}//${location.host}${wsPath}`;
+
+    const gqlFetcher = GraphiQL.createFetcher({
+        url,
+        subscriptionUrl,
+    });
+
+    ReactDOM.render(
+        React.createElement(GraphiQL, {
+            fetcher: gqlFetcher,
+            defaultVariableEditorOpen: true,
+            headerEditorEnabled: true,
+            shouldPersistHeaders: true
+        }),
+        document.getElementById('graphiql'),
+    );
+</script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+# ==== SCHEMA DEFINITION LANGUAGE (SDL) ====
+# Ini kontrak schema-first ala GraphQL: satu sumber kebenaran untuk semua
+# type, field, query, dan mutation yang server sediakan -- mirip peran
+# transfer.proto di grpc-demo, tapi bedanya SDL ini dieksekusi langsung
+# di runtime lewat resolver Java (tidak ada tahap code-gen seperti protoc).
+#
+# Yang paling khas dibanding REST: di sini HANYA ADA SATU endpoint HTTP
+# (POST /graphql). Client tidak memanggil "/accounts/summary" atau
+# "/accounts/detail" yang berbeda -- client memilih sendiri field mana
+# yang mau diambil dari graph yang sama lewat isi query-nya.
+
+type Account {
+    id: ID!
+    ownerName: String!
+    balance: Int!
+
+    # Field ini SENGAJA dipetakan ke resolver yang naif (lihat
+    # NaiveTransactionResolver) -- dipanggil satu kali PER Account oleh
+    # GraphQL executor, jadi query atas N akun = N pemanggilan resolver
+    # terpisah. Ini contoh N+1 problem yang sengaja dibiarkan naif.
+    transactionsNaive: [Transaction!]!
+
+    # Field ini secara SDL terlihat identik, tapi resolver-nya (lihat
+    # TransactionDataLoader) mengumpulkan semua accountId yang diminta
+    # dalam satu "tick" lalu mengambil datanya sekaligus lewat DataLoader
+    # -- N akun tetap 1 pemanggilan batch, bukan N pemanggilan terpisah.
+    transactions(limit: Int): [Transaction!]!
+}
+
+type Transaction {
+    id: ID!
+    type: String!
+    amount: Int!
+    referenceId: String!
+    timestamp: String!
+}
+
+type TransferResult {
+    referenceId: String!
+    status: String!
+    message: String!
+    # Mutation ini langsung mengembalikan graph berelasi (bukan cuma flag
+    # sukses/gagal) -- client bisa ambil saldo terbaru kedua akun dalam
+    # SATU round-trip yang sama, tanpa perlu GET terpisah seperti di REST.
+    sourceAccount: Account!
+    destinationAccount: Account!
+}
+
+# ==== QUERY vs MUTATION ====
+# Bedanya konvensi, bukan aturan teknis yang dipaksakan: Query untuk baca
+# data (idempotent, boleh dieksekusi paralel oleh executor), Mutation
+# untuk operasi yang mengubah state (dieksekusi berurutan oleh executor,
+# supaya efek sampingnya predictable).
+type Query {
+    account(id: ID!): Account
+    accounts: [Account!]!
+}
+
+type Mutation {
+    transfer(
+        sourceAccountId: ID!
+        destinationAccountId: ID!
+        amount: Int!
+        referenceId: String!
+    ): TransferResult!
+}

@@ -1,0 +1,57 @@
+syntax = "proto3";
+
+package transfer;
+
+option java_package = "com.learn.datacomm.grpc";
+option java_outer_classname = "TransferProto";
+option java_multiple_files = true;
+
+// ==== INI BAGIAN YANG PALING SPESIFIK KE "gRPC" ====
+//
+// Schema-first: kontrak antara client dan server didefinisikan di file .proto
+// ini, bukan di dokumentasi terpisah (seperti OpenAPI di REST) atau implisit
+// lewat kode (seperti tcp-raw-demo). Dari file ini, protoc + grpc-java plugin
+// men-generate:
+//   - Class Java untuk tiap message (TransferRequest, TransferResponse, dst)
+//     lengkap dengan serialisasi biner (protobuf wire format) -- lebih ringkas
+//     dari JSON karena field diencode pakai field number, bukan nama string.
+//   - Base class stub untuk client (blocking & async) dan server, sudah
+//     termasuk logic pemanggilan RPC lewat HTTP/2.
+//
+// Field number (= 1, = 2, dst) menentukan urutan/identitas field di wire
+// format -- BUKAN sekadar dekorasi. Mengubah nomor field yang sudah dipakai
+// production akan memutus kompatibilitas dengan client lama.
+
+message TransferRequest {
+  string source_account = 1;
+  string destination_account = 2;
+  int64 amount = 3;
+  string reference_id = 4;
+}
+
+message TransferResponse {
+  string reference_id = 1;
+  string status = 2;
+  string message = 3;
+}
+
+// Dipakai oleh server-streaming RPC: tiap "tick" merepresentasikan satu
+// tahap pemrosesan transfer yang dikirim server secara bertahap.
+message TransferStatusUpdate {
+  string reference_id = 1;
+  string stage = 2;
+  int32 progress_percent = 3;
+}
+
+service TransferService {
+  // UNARY RPC: satu request -> satu response, mirip REST call biasa.
+  // Cocok untuk operasi yang hasilnya langsung didapat sekaligus.
+  rpc Transfer(TransferRequest) returns (TransferResponse);
+
+  // SERVER STREAMING RPC: satu request -> banyak response berturut-turut
+  // dalam SATU koneksi HTTP/2 yang sama. Server bisa "push" beberapa update
+  // tanpa client perlu request ulang -- ini yang TIDAK ada padanannya yang
+  // simpel di REST biasa (butuh polling berkali-kali, atau SSE/WebSocket
+  // terpisah). Di gRPC, ini bagian native dari protokolnya.
+  rpc WatchTransferProgress(TransferRequest) returns (stream TransferStatusUpdate);
+}

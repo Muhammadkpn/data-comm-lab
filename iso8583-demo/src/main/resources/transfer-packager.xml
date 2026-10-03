@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE isopackager PUBLIC
+        "-//jPOS/jPOS Generic Packager DTD 1.0//EN"
+        "http://jpos.org/dtd/generic-packager-1.0.dtd">
+
+<!--
+  ==== INI BAGIAN YANG PALING SPESIFIK KE "ISO 8583" ====
+
+  Packager mendefinisikan, untuk SETIAP Data Element (DE), berapa panjangnya
+  dan bagaimana cara encode/decode-nya (fixed-length vs variable-length
+  dengan length-indicator, numeric vs alphanumeric, dst). Ini kontrak biner
+  yang jauh lebih ketat dibanding JSON di REST, posisi dan format tiap
+  byte sudah baku, ditentukan field number-nya (bukan nama).
+
+  jPOS menyediakan GenericPackager yang membaca definisi ini dari XML,
+  supaya kita tidak perlu menulis kode pack/unpack manual per field.
+
+  Field yang dipakai untuk skenario "transfer dana" (subset dari 128 DE
+  standar ISO 8583, dipilih yang relevan saja):
+    DE 2  - Primary Account Number (dipakai sebagai source account)
+    DE 3  - Processing Code
+    DE 4  - Amount, Transaction
+    DE 11 - System Trace Audit Number (STAN), dipakai sebagai reference id
+    DE 37 - Retrieval Reference Number
+    DE 39 - Response Code (00 = approved, cuma ada di response)
+    DE 41 - Card Acceptor Terminal ID
+    DE 102 - Account Identification 1 (dipakai sebagai destination account)
+-->
+<isopackager>
+
+    <!-- DE 0: Message Type Indicator (MTI), selalu 4 digit numeric, di luar bitmap -->
+    <isofield
+        id="0"
+        length="4"
+        name="Message Type Indicator"
+        class="org.jpos.iso.IFA_NUMERIC"/>
+
+    <!-- DE 1: Bitmap, menandai DE mana saja yang ADA di pesan ini.
+         Ini yang membuat ISO 8583 kompak: field yang tidak dipakai
+         tidak perlu dikirim sama sekali, beda dengan REST/JSON yang
+         biasanya tetap mencantumkan field walau null/kosong. -->
+    <isofield
+        id="1"
+        length="16"
+        name="Bitmap"
+        class="org.jpos.iso.IFA_BITMAP"/>
+
+    <isofield
+        id="2"
+        length="19"
+        name="Primary Account Number (source)"
+        class="org.jpos.iso.IFA_LLNUM"/>
+
+    <isofield
+        id="3"
+        length="6"
+        name="Processing Code"
+        class="org.jpos.iso.IFA_NUMERIC"/>
+
+    <isofield
+        id="4"
+        length="12"
+        name="Amount, Transaction"
+        class="org.jpos.iso.IFA_NUMERIC"/>
+
+    <isofield
+        id="11"
+        length="6"
+        name="System Trace Audit Number"
+        class="org.jpos.iso.IFA_NUMERIC"/>
+
+    <isofield
+        id="37"
+        length="12"
+        name="Retrieval Reference Number"
+        class="org.jpos.iso.IF_CHAR"/>
+
+    <isofield
+        id="39"
+        length="2"
+        name="Response Code"
+        class="org.jpos.iso.IF_CHAR"/>
+
+    <isofield
+        id="41"
+        length="8"
+        name="Card Acceptor Terminal ID"
+        class="org.jpos.iso.IF_CHAR"/>
+
+    <isofield
+        id="102"
+        length="28"
+        name="Account Identification 1 (destination)"
+        class="org.jpos.iso.IFA_LLNUM"/>
+
+</isopackager>

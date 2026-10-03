@@ -1,0 +1,59 @@
+syntax = "proto3";
+
+package transfer.drift.v2;
+
+option java_package = "com.learn.datacomm.grpc.drift.v2";
+option java_multiple_files = true;
+
+// ==== VERSI 2 (BARU) -- dipakai oleh "server yang sudah di-update" ====
+//
+// Bayangkan developer lain mengubah kontrak seperti di bawah ini, lalu
+// men-deploy ulang server-nya, TAPI client lama (v1) belum di-rebuild.
+// Semua perubahan di bawah ini LOLOS compile di kedua sisi -- tidak ada satu
+// pun error yang muncul saat `mvn compile`, karena masing-masing sisi hanya
+// meng-compile versi proto-nya sendiri.
+//
+// Yang berubah dari v1:
+//   1. destination_account = 2  -> DIHAPUS (dan sengaja TIDAK di-reserved)
+//   2. int64 amount = 3         -> string amount = 3   (wire type BERBEDA)
+//   3. reference_id = 4         -> trace_id = 4        (rename, nomor tetap)
+//   4. currency = 5             -> field BARU
+//
+// Ingat: nama field TIDAK ikut dikirim di wire format protobuf. Yang dikirim
+// hanya NOMOR field + nilainya. Jadi rename itu tak terlihat di jaringan,
+// sementara mengubah nomor (atau memakai ulang nomor) itu fatal.
+
+message TransferRequest {
+  string source_account = 1;
+  // destination_account = 2 dihapus tanpa `reserved` -- lihat SchemaDriftDemo
+  // skenario 7 untuk akibatnya kalau nomor 2 nanti dipakai ulang.
+  string amount = 3;
+  string trace_id = 4;
+  string currency = 5;
+}
+
+// Pasangan WidenNumber v1: int32 -> int64. Wire type sama-sama varint,
+// jadi nilainya tetap terbaca dengan BENAR (bukan kegagalan).
+message WidenNumber {
+  int64 small = 1;
+}
+
+// Nomor 2 bekas destination_account dipakai ulang untuk field lain yang
+// artinya beda total, dengan tipe yang sama-sama string (wire type sama).
+// Akibatnya: data lama TIDAK dianggap unknown field, tapi diam-diam terbaca
+// sebagai field baru -- nomor rekening tujuan berubah makna jadi "nama bank".
+message ReuseNumber {
+  string source_account = 1;
+  string bank_name = 2;
+}
+
+// Cara yang BENAR untuk menghapus field: pesan nomornya pakai `reserved`
+// supaya tidak mungkin dipakai ulang tanpa sengaja. protoc akan menolak
+// compile kalau ada yang mencoba memakai nomor 2 di message ini.
+message ReuseNumberSafe {
+  reserved 2;
+  reserved "destination_account";
+
+  string source_account = 1;
+  string bank_name = 3;
+}

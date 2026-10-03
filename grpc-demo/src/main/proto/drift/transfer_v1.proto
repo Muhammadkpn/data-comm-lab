@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+package transfer.drift.v1;
+
+option java_package = "com.learn.datacomm.grpc.drift.v1";
+option java_multiple_files = true;
+
+// ==== VERSI 1 (LAMA) -- dipakai oleh "client yang belum di-update" ====
+//
+// File ini SENGAJA dipisah dari transfer.proto utama supaya dua versi kontrak
+// bisa hidup berdampingan di SATU JVM (paket Java-nya beda: ...drift.v1 vs
+// ...drift.v2). Di dunia nyata, v1 ada di JAR client lama dan v2 ada di server
+// yang sudah di-deploy ulang -- di sini kita simulasikan keduanya sekaligus
+// supaya bisa dilihat tanpa perlu dua proses terpisah.
+//
+// Isi message ini = salinan persis TransferRequest di transfer.proto.
+
+message TransferRequest {
+  string source_account = 1;
+  string destination_account = 2;
+  int64 amount = 3;
+  string reference_id = 4;
+}
+
+// Dipakai untuk skenario "ganti tipe tapi WIRE TYPE-nya sama".
+// int32 dan int64 sama-sama diencode sebagai varint di wire format protobuf,
+// jadi perubahan int32 -> int64 termasuk perubahan yang AMAN.
+message WidenNumber {
+  int32 small = 1;
+}
+
+// Dipakai untuk skenario "nomor field dipakai ulang" (paling berbahaya).
+// Di v2, field nomor 2 dihapus lalu nomornya dipakai lagi untuk field yang
+// artinya benar-benar berbeda.
+message ReuseNumber {
+  string source_account = 1;
+  string destination_account = 2;
+}
