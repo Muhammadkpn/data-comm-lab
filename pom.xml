@@ -23,6 +23,7 @@
         <module>ofs-demo</module>
         <module>graphql-demo</module>
         <module>auth-demo</module>
+        <module>realtime-demo</module>
     </modules>
 
     <properties>
