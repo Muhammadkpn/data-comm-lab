@@ -26,6 +26,7 @@
         <module>realtime-demo</module>
         <module>gateway-demo</module>
         <module>udp-demo</module>
+        <module>cors-demo</module>
     </modules>
 
     <properties>

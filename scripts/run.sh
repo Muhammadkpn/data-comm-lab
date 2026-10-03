@@ -31,6 +31,7 @@ iso8583 client|iso8583-demo|com.learn.datacomm.iso8583.TransferClient
 ofs server|ofs-demo|com.learn.datacomm.ofs.TransferServer
 ofs client|ofs-demo|com.learn.datacomm.ofs.TransferClient
 auth server|auth-demo|boot
+cors server|cors-demo|boot
 realtime server|realtime-demo|boot
 realtime client|realtime-demo|com.learn.datacomm.realtime.client.RealtimeComparisonClient
 gateway server|gateway-demo|boot

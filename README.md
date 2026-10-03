@@ -30,6 +30,7 @@ scripts/run.sh      # daftar demo yang bisa dijalankan
 | [`grpc-demo`](grpc-demo/) | 9091 | §12 HTTP vs gRPC | Protobuf schema-first, unary vs server streaming, drift proto |
 | [`graphql-demo`](graphql-demo/) | 8081 | §13 REST vs GraphQL | Satu endpoint, field selection, N+1 vs DataLoader |
 | [`auth-demo`](auth-demo/) | 8082 | §7 Auth | JWT access+refresh (rotation, revoke, `alg=none`), session + CSRF, API key, Basic, 401 vs 403 |
+| [`cors-demo`](cors-demo/) | 8085 + 8086 | §11 CORS | Same-origin policy, simple vs preflight, credentials, expose headers, origin dipantulkan |
 | [`realtime-demo`](realtime-demo/) | 8083 | §14 Real-time | Short polling vs long polling vs SSE vs WebSocket, diukur request & delay-nya |
 | [`gateway-demo`](gateway-demo/) | 8084 | §10 Rate limiting, §16 API gateway | Token bucket vs fixed window (edge burst), 429 + `Retry-After`, auth di edge, correlation id, 502 vs 504 |
 | [`iso8583-demo`](iso8583-demo/) | 9095 | Banking | Pesan biner ISO 8583 (MTI, bitmap, DE) dengan jPOS |
